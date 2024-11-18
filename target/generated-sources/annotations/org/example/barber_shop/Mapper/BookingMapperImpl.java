@@ -3,7 +3,8 @@ package org.example.barber_shop.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
-import org.example.barber_shop.DTO.Booking.BookingResponse;
+import org.example.barber_shop.DTO.Booking.BookingResponseNoStaff;
+import org.example.barber_shop.DTO.Booking.BookingResponseNoUser;
 import org.example.barber_shop.DTO.Booking.WorkScheduleResponse;
 import org.example.barber_shop.DTO.BookingDetail.BookingDetailResponse;
 import org.example.barber_shop.DTO.Combo.ComboResponse;
@@ -20,42 +21,42 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-13T09:23:17+0700",
+    date = "2024-11-15T21:29:21+0700",
     comments = "version: 1.6.2, compiler: javac, environment: Java 18.0.2.1 (Oracle Corporation)"
 )
 @Component
 public class BookingMapperImpl implements BookingMapper {
 
     @Override
-    public BookingResponse toResponse(Booking booking) {
+    public BookingResponseNoUser toResponse(Booking booking) {
         if ( booking == null ) {
             return null;
         }
 
-        BookingResponse bookingResponse = new BookingResponse();
+        BookingResponseNoUser bookingResponseNoUser = new BookingResponseNoUser();
 
         if ( booking.getId() != null ) {
-            bookingResponse.id = booking.getId();
+            bookingResponseNoUser.id = booking.getId();
         }
-        bookingResponse.status = booking.getStatus();
-        bookingResponse.note = booking.getNote();
-        bookingResponse.staff = userToUserResponse( booking.getStaff() );
-        bookingResponse.startTime = booking.getStartTime();
-        bookingResponse.endTime = booking.getEndTime();
-        bookingResponse.createdAt = booking.getCreatedAt();
-        bookingResponse.updatedAt = booking.getUpdatedAt();
-        bookingResponse.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
+        bookingResponseNoUser.status = booking.getStatus();
+        bookingResponseNoUser.note = booking.getNote();
+        bookingResponseNoUser.staff = userToUserResponse( booking.getStaff() );
+        bookingResponseNoUser.startTime = booking.getStartTime();
+        bookingResponseNoUser.endTime = booking.getEndTime();
+        bookingResponseNoUser.createdAt = booking.getCreatedAt();
+        bookingResponseNoUser.updatedAt = booking.getUpdatedAt();
+        bookingResponseNoUser.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
 
-        return bookingResponse;
+        return bookingResponseNoUser;
     }
 
     @Override
-    public List<BookingResponse> toResponses(List<Booking> bookings) {
+    public List<BookingResponseNoUser> toResponses(List<Booking> bookings) {
         if ( bookings == null ) {
             return null;
         }
 
-        List<BookingResponse> list = new ArrayList<BookingResponse>( bookings.size() );
+        List<BookingResponseNoUser> list = new ArrayList<BookingResponseNoUser>( bookings.size() );
         for ( Booking booking : bookings ) {
             list.add( toResponse( booking ) );
         }
@@ -72,6 +73,20 @@ public class BookingMapperImpl implements BookingMapper {
         List<WorkScheduleResponse> list = new ArrayList<WorkScheduleResponse>( bookings.size() );
         for ( Booking booking : bookings ) {
             list.add( bookingToWorkScheduleResponse( booking ) );
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<BookingResponseNoStaff> toResponseNoStaff(List<Booking> bookings) {
+        if ( bookings == null ) {
+            return null;
+        }
+
+        List<BookingResponseNoStaff> list = new ArrayList<BookingResponseNoStaff>( bookings.size() );
+        for ( Booking booking : bookings ) {
+            list.add( bookingToBookingResponseNoStaff( booking ) );
         }
 
         return list;
@@ -235,5 +250,27 @@ public class BookingMapperImpl implements BookingMapper {
         workScheduleResponse.endTime = booking.getEndTime();
 
         return workScheduleResponse;
+    }
+
+    protected BookingResponseNoStaff bookingToBookingResponseNoStaff(Booking booking) {
+        if ( booking == null ) {
+            return null;
+        }
+
+        BookingResponseNoStaff bookingResponseNoStaff = new BookingResponseNoStaff();
+
+        if ( booking.getId() != null ) {
+            bookingResponseNoStaff.id = booking.getId();
+        }
+        bookingResponseNoStaff.status = booking.getStatus();
+        bookingResponseNoStaff.note = booking.getNote();
+        bookingResponseNoStaff.customer = userToUserResponse( booking.getCustomer() );
+        bookingResponseNoStaff.startTime = booking.getStartTime();
+        bookingResponseNoStaff.endTime = booking.getEndTime();
+        bookingResponseNoStaff.createdAt = booking.getCreatedAt();
+        bookingResponseNoStaff.updatedAt = booking.getUpdatedAt();
+        bookingResponseNoStaff.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
+
+        return bookingResponseNoStaff;
     }
 }
