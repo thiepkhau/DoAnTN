@@ -20,12 +20,10 @@ public class PaymentController {
     public ApiResponse<?> getVNPayUrl(@ModelAttribute PaymentRequest paymentRequest, HttpServletRequest request) throws UnsupportedEncodingException {
         return new ApiResponse<>(
                 HttpStatus.OK.value(), "VNPAY URL", paymentService.getVnpayUrl(paymentRequest, request)
-        );
-    }
+        );}
     @GetMapping("/vnpay-result")
     public ApiResponse<?> getVNPayResult(HttpServletRequest request) throws UnsupportedEncodingException {
         return new ApiResponse<>(
                 HttpStatus.OK.value(), "HMM", paymentService.handleVnpayResult(request)
-        );
-    }
+        );}
 }
