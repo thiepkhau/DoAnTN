@@ -23,13 +23,11 @@ public class ComboController {
     public ApiResponse<?> getAllCombo() {
         return new ApiResponse<>(
                 HttpStatus.OK.value(), "ALL COMBOS", comboService.getAllCombo()
-        );
-    }
+        );}
 
     @PostMapping(value = "/add-combo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<?> addCombo(ComboRequest comboRequest) throws IOException {
         return new ApiResponse<>(
                 HttpStatus.CREATED.value(), "COMBO CREATED", comboService.addCombo(comboRequest)
-        );
-    }
+        );}
 }
