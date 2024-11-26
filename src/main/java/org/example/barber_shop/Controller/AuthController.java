@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final UserService userService;
     private final ClientRegistrationRepository clientRegistrationRepository;
-
     @PostMapping("/register")
     public ApiResponse<?> register(@RequestBody RegisterRequest registerRequest) {
         return new ApiResponse<>(
