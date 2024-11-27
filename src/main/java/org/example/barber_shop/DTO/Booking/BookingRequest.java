@@ -12,4 +12,5 @@ public class BookingRequest {
     public Timestamp startTime;
     public List<Long> serviceIds;
     public List<Long> comboIds;
+
 }
