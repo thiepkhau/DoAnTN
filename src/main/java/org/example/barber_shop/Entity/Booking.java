@@ -37,5 +37,4 @@ public class Booking extends DistributedEntity{
     private long totalPrice;
 
     @ManyToOne
-    private Payment payment;
-}
+    private Payment payment;}
