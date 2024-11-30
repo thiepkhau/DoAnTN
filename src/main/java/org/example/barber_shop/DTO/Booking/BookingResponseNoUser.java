@@ -18,5 +18,4 @@ public class BookingResponseNoUser {
     public Timestamp createdAt;
     public Timestamp updatedAt;
     public List<BookingDetailResponse> bookingDetails;
-
 }

@@ -17,5 +17,4 @@ public class BookingResponseNoStaff {
     public Timestamp createdAt;
     public Timestamp updatedAt;
     public List<BookingDetailResponse> bookingDetails;
-
 }
