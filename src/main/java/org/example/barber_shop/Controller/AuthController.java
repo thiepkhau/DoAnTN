@@ -75,7 +75,6 @@ public class AuthController {
                 .redirectUri("http://localhost:8080/login/oauth2/code/google")
                 .scope("openid", "profile", "email")
                 .build();
-
         String loginUrl = authorizationRequest.getAuthorizationUri();
         return new ApiResponse<>(
             HttpStatus.OK.value(), "GOOGLE_LOGIN", loginUrl
