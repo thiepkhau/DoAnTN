@@ -25,9 +25,11 @@ public class BookingDetail extends DistributedEntity{
 
     public BookingDetail(Booking booking, Service service) {
         this.booking = booking;
-        this.service = service;    }
+        this.service = service;
+    }
 
     public BookingDetail(Booking booking, Combo combo) {
         this.booking = booking;
-        this.combo = combo;    }
+        this.combo = combo;
+    }
 }

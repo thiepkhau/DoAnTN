@@ -3,10 +3,12 @@ package org.example.barber_shop.Config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.example.barber_shop.Constants.Role;
 import org.example.barber_shop.Entity.File;
 import org.example.barber_shop.Entity.User;
 import org.example.barber_shop.Repository.FileRepository;
 import org.example.barber_shop.Repository.UserRepository;
+import org.example.barber_shop.Service.TemporaryCodeService;
 import org.example.barber_shop.Util.JWTUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -27,9 +29,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
 import java.io.IOException;
 
 @Configuration
@@ -40,14 +39,14 @@ public class SecurityConfig {
 
     private final JWTFilter jwtFilter;
     private final UserRepository userRepository;
-    private final JWTUtil jwtUtil;
     private final FileRepository fileRepository;
+    private final TemporaryCodeService temporaryCodeService;
     @Value("${front_end_server}")
     private String front_end_server;
-    private final String[] publicApi = {"/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/service-type/get-all-service-types", "/api/service/get-all-services", "/api/combo/get-all-combos", "/api/users/get-all-staffs", "/api/users/get-all-receptionists", "/api/users/get-all-customers", "/api/users/get-all-admins", "/api/booking/get-staff-work-schedule-in-week", "/api/payment/vnpay-result"};
-    private final String[] adminApi = {"/api/users/", "/api/service-type/add-service-type", "/api/service/add-service", "/api/combo/add-combo"};
-    private final String[] customerApi = {"/api/booking/book", "/api/booking/customer-get-bookings", "/api/payment/get-vnpay-url"};
-    private final String[] staffApi = {"/api/booking/confirm-booking", "/api/booking/staff-get-bookings"};
+    private final String[] publicApi = {"/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/service-type/get-all-service-types", "/api/service/get-all-services", "/api/combo/get-all-combos", "/api/users/get-all-staffs", "/api/users/get-all-customers", "/api/users/get-all-admins", "/api/booking/get-staff-work-schedule-in-week", "/api/payment/vnpay-result", "/api/staff-shift/get-staff-shift", "/websocket/**", "/api/review/all", "/api/review/staff-review/**", "/api/combo/get-one-combo/**"};
+    private final String[] adminApi = {"/api/booking/complete-booking/**", "/api/users", "/api/service-type/add-service-type", "/api/service/add-service", "/api/combo/add-combo", "/api/shift/get-all-shifts", "/api/shift/**", "/api/booking/admin-book", "/api/staff-shift", "/api/salary/**", "/api/booking/no-show-booking/**", "/api/weekly-salary", "/api/payment/cash/**", "/api/voucher/**"};
+    private final String[] customerApi = {"/api/booking/book", "/api/payment/get-vnpay-url", "/api/booking/update-booking", "/api/booking/cancel/**", "/api/review"};
+    private final String[] staffApi = {"/api/weekly-salary/staff", "api/booking/reject-booking/**"};
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.cors(cors -> cors.configurationSource(request -> {
@@ -106,20 +105,9 @@ public class SecurityConfig {
             user.setAvatar(file);
             user = userRepository.save(user);
         }
-        String jwt = jwtUtil.generateToken(user);
-        response.sendRedirect(front_end_server + "/token?token=" + jwt);
+        String code = temporaryCodeService.generateCode(String.valueOf(user.getId()));
+        response.sendRedirect(front_end_server + "?token_exchange=" + code);
     }
-    /*@Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOriginPattern("*");
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.setAllowCredentials(true); // Allow credentials
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-        return new CorsFilter(urlBasedCorsConfigurationSource);
-    }*/
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

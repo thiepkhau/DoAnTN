@@ -1,24 +1,30 @@
 package org.example.barber_shop.Controller;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.example.barber_shop.DTO.ApiResponse;
 import org.example.barber_shop.DTO.User.ForgotPasswordRequest;
 import org.example.barber_shop.DTO.User.LoginRequest;
 import org.example.barber_shop.DTO.User.RegisterRequest;
 import org.example.barber_shop.DTO.User.ResetPasswordRequest;
+import org.example.barber_shop.Service.TemporaryCodeService;
 import org.example.barber_shop.Service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+@Data
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final UserService userService;
-    private final ClientRegistrationRepository clientRegistrationRepository;
+    private final TemporaryCodeService temporaryCodeService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
     @PostMapping("/register")
     public ApiResponse<?> register(@RequestBody RegisterRequest registerRequest) {
         return new ApiResponse<>(
@@ -67,17 +73,17 @@ public class AuthController {
                 HttpStatus.OK.value(), "PASSWORD RESET", null
         );
     }
-    @GetMapping("/get-google-login-url")
-    public ApiResponse<?> getGoogleLoginUrl(){
-        OAuth2AuthorizationRequest authorizationRequest = OAuth2AuthorizationRequest
-                .authorizationCode()
-                .clientId("950893291709-9rqulakhl78cnlejkuofncru62p49epo.apps.googleusercontent.com")
-                .redirectUri("http://localhost:8080/login/oauth2/code/google")
-                .scope("openid", "profile", "email")
-                .build();
-        String loginUrl = authorizationRequest.getAuthorizationUri();
+    @PostMapping("/token-exchange")
+    public ApiResponse<?> tokenExchange(@RequestBody Map<String, String> request){
         return new ApiResponse<>(
-            HttpStatus.OK.value(), "GOOGLE_LOGIN", loginUrl
+                HttpStatus.OK.value(),
+                "LOGIN_SUCCESS",
+                temporaryCodeService.handleExchangeRequest(request)
         );
+    }
+    @GetMapping("/test-ws")
+    public String test(@RequestParam String email, @RequestParam String message) {
+        simpMessagingTemplate.convertAndSendToUser(email, "/topic",message);
+        return "sent";
     }
 }

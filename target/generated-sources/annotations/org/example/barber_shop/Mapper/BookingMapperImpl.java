@@ -3,6 +3,7 @@ package org.example.barber_shop.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.processing.Generated;
+import org.example.barber_shop.DTO.Booking.BookingResponseAdmin;
 import org.example.barber_shop.DTO.Booking.BookingResponseNoStaff;
 import org.example.barber_shop.DTO.Booking.BookingResponseNoUser;
 import org.example.barber_shop.DTO.Booking.WorkScheduleResponse;
@@ -11,6 +12,7 @@ import org.example.barber_shop.DTO.Combo.ComboResponse;
 import org.example.barber_shop.DTO.File.FileResponseNoOwner;
 import org.example.barber_shop.DTO.Service.ServiceResponseNoType;
 import org.example.barber_shop.DTO.User.UserResponse;
+import org.example.barber_shop.DTO.User.UserResponseNoFile;
 import org.example.barber_shop.Entity.Booking;
 import org.example.barber_shop.Entity.BookingDetail;
 import org.example.barber_shop.Entity.Combo;
@@ -21,7 +23,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-15T21:29:21+0700",
+    date = "2024-11-22T09:35:49+0700",
     comments = "version: 1.6.2, compiler: javac, environment: Java 18.0.2.1 (Oracle Corporation)"
 )
 @Component
@@ -87,6 +89,20 @@ public class BookingMapperImpl implements BookingMapper {
         List<BookingResponseNoStaff> list = new ArrayList<BookingResponseNoStaff>( bookings.size() );
         for ( Booking booking : bookings ) {
             list.add( bookingToBookingResponseNoStaff( booking ) );
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<BookingResponseAdmin> toResponseAdmin(List<Booking> bookings) {
+        if ( bookings == null ) {
+            return null;
+        }
+
+        List<BookingResponseAdmin> list = new ArrayList<BookingResponseAdmin>( bookings.size() );
+        for ( Booking booking : bookings ) {
+            list.add( bookingToBookingResponseAdmin( booking ) );
         }
 
         return list;
@@ -272,5 +288,51 @@ public class BookingMapperImpl implements BookingMapper {
         bookingResponseNoStaff.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
 
         return bookingResponseNoStaff;
+    }
+
+    protected UserResponseNoFile userToUserResponseNoFile(User user) {
+        if ( user == null ) {
+            return null;
+        }
+
+        UserResponseNoFile userResponseNoFile = new UserResponseNoFile();
+
+        if ( user.getId() != null ) {
+            userResponseNoFile.id = user.getId().intValue();
+        }
+        userResponseNoFile.name = user.getName();
+        userResponseNoFile.email = user.getEmail();
+        userResponseNoFile.phone = user.getPhone();
+        userResponseNoFile.dob = user.getDob();
+        userResponseNoFile.verified = user.isVerified();
+        userResponseNoFile.blocked = user.isBlocked();
+        userResponseNoFile.role = user.getRole();
+        userResponseNoFile.createdAt = user.getCreatedAt();
+        userResponseNoFile.updatedAt = user.getUpdatedAt();
+
+        return userResponseNoFile;
+    }
+
+    protected BookingResponseAdmin bookingToBookingResponseAdmin(Booking booking) {
+        if ( booking == null ) {
+            return null;
+        }
+
+        BookingResponseAdmin bookingResponseAdmin = new BookingResponseAdmin();
+
+        if ( booking.getId() != null ) {
+            bookingResponseAdmin.id = booking.getId();
+        }
+        bookingResponseAdmin.status = booking.getStatus();
+        bookingResponseAdmin.note = booking.getNote();
+        bookingResponseAdmin.staff = userToUserResponseNoFile( booking.getStaff() );
+        bookingResponseAdmin.customer = userToUserResponseNoFile( booking.getCustomer() );
+        bookingResponseAdmin.startTime = booking.getStartTime();
+        bookingResponseAdmin.endTime = booking.getEndTime();
+        bookingResponseAdmin.createdAt = booking.getCreatedAt();
+        bookingResponseAdmin.updatedAt = booking.getUpdatedAt();
+        bookingResponseAdmin.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
+
+        return bookingResponseAdmin;
     }
 }

@@ -2,7 +2,9 @@ package org.example.barber_shop.Controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.barber_shop.DTO.ApiResponse;
+import org.example.barber_shop.DTO.User.AdminCreateUser;
 import org.example.barber_shop.DTO.User.UpdateProfileRequest;
+import org.example.barber_shop.DTO.User.UpdateUserRequest;
 import org.example.barber_shop.Service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +18,8 @@ import java.io.IOException;
 public class UserController {
     public final UserService userService;
 
-    @GetMapping("/")
-    public ApiResponse<?> getAllUsers() {
+    @GetMapping("")
+        public ApiResponse<?> getAllUsers() {
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "ALL USERS",
@@ -36,6 +38,7 @@ public class UserController {
 
     @PutMapping("/profile")
     public ApiResponse<?> updateUserProfile(@RequestBody UpdateProfileRequest updateProfileRequest){
+        System.out.println("update profile");
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "PROFILE UPDATED",
@@ -68,12 +71,6 @@ public class UserController {
                 HttpStatus.CONTINUE.value(), "ALL CUSTOMERS", userService.getAllCustomers()
         );
     }
-    @GetMapping("/get-all-receptionists")
-    public ApiResponse<?> getAllReceptionists() {
-        return new ApiResponse<>(
-                HttpStatus.CONTINUE.value(), "ALL RECEPTIONISTS", userService.getAllReceptionists()
-        );
-    }
     @GetMapping("/logout")
     public ApiResponse<?> logout(@RequestHeader("Authorization") String authorizationHeader){
         if (userService.logout(authorizationHeader)){
@@ -85,5 +82,24 @@ public class UserController {
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), "FAIL", "This token is still valid."
             );
         }
+    }
+    @PutMapping("")
+    public ApiResponse<?> updateUser(@RequestBody UpdateUserRequest updateUserRequest){
+        System.out.println("update user put mapping");
+        return new ApiResponse<>(
+                HttpStatus.OK.value(), "USER UPDATED", userService.updateUser(updateUserRequest)
+        );
+    }
+    @PostMapping("")
+    public ApiResponse<?> adminCreateUser(@RequestBody AdminCreateUser adminCreateUser){
+        return new ApiResponse<>(
+                HttpStatus.OK.value(), "USER CREATED", userService.adminCreateUser(adminCreateUser)
+        );
+    }
+    @PutMapping("/block/{id}")
+    public ApiResponse<?> blockUser(@PathVariable long id){
+        return new ApiResponse<>(
+                HttpStatus.OK.value(), "USER BLOCKED", userService.blockUser(id)
+        );
     }
 }

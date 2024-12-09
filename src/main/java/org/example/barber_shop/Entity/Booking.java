@@ -15,9 +15,10 @@ import java.util.List;
 @Table(name = "bookings")
 @ToString
 public class Booking extends DistributedEntity{
+    @Enumerated(EnumType.STRING)
     private BookingStatus status;
 
-    @Column(columnDefinition = "NVARCHAR(255)")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String note;
 
     @ManyToOne
@@ -37,4 +38,9 @@ public class Booking extends DistributedEntity{
     private long totalPrice;
 
     @ManyToOne
-    private Payment payment;}
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
+
+    @OneToOne(mappedBy = "booking")
+    private Review review;
+}

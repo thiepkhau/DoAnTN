@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
+import java.time.LocalTime;
 import java.util.List;
 
 @Component
@@ -20,6 +21,8 @@ public class SeederService implements CommandLineRunner {
     private final ServiceTypeRepository serviceTypeRepository;
     private final ServiceRepository serviceRepository;
     private final ComboRepository comboRepository;
+    private final ShiftRepository shiftRepository;
+    private final StaffSalaryRepository staffSalaryRepository;
     @Override
     public void run(String... args) throws Exception {
         if (userRepository.count() == 0){
@@ -27,6 +30,46 @@ public class SeederService implements CommandLineRunner {
         }
         if (serviceTypeRepository.count() == 0 && comboRepository.count() == 0) {
             seedDefaultTypesServicesCombos();
+        }
+        if (shiftRepository.count() == 0) {
+            Shift morning = new Shift();
+            morning.setName("Morning shift");
+            morning.setStartTime(LocalTime.of(7, 0));
+            morning.setEndTime(LocalTime.of(12, 0));
+
+            Shift afternoon = new Shift();
+            afternoon.setName("Afternoon shift");
+            afternoon.setStartTime(LocalTime.of(12, 0));
+            afternoon.setEndTime(LocalTime.of(17, 0));
+
+            Shift night = new Shift();
+            night.setName("Night shift");
+            night.setStartTime(LocalTime.of(17, 0));
+            night.setEndTime(LocalTime.of(22, 0));
+
+            shiftRepository.saveAll(List.of(morning, afternoon, night));
+        }
+        if (staffSalaryRepository.count() == 0) {
+            User staff2 = userRepository.findByName("staff2");
+            User staff3 = userRepository.findByName("staff3");
+            User staff4 = userRepository.findByName("staff4");
+
+            StaffSalary staffSalary = new StaffSalary();
+            staffSalary.setStaff(staff2);
+            staffSalary.setRate(25000);
+            staffSalary.setPercentage(10);
+
+            StaffSalary staffSalary2 = new StaffSalary();
+            staffSalary2.setStaff(staff3);
+            staffSalary2.setRate(30000);
+            staffSalary2.setPercentage(15);
+
+            StaffSalary staffSalary3 = new StaffSalary();
+            staffSalary3.setStaff(staff4);
+            staffSalary3.setRate(35000);
+            staffSalary3.setPercentage(17);
+
+            staffSalaryRepository.saveAll(List.of(staffSalary, staffSalary2, staffSalary3));
         }
         System.out.println("============seed done============");
     }
@@ -50,19 +93,28 @@ public class SeederService implements CommandLineRunner {
         user1.setBlocked(false);
         user1.setAvatar(file);
         user1.setRole(Role.ROLE_ADMIN);
-        userRepository.save(user1);
 
-        User user2 = new User();
-        user2.setName("customer");
-        user2.setDob(new Date(System.currentTimeMillis()));
-        user2.setPhone("0223456789");
-        user2.setEmail("customer@gmail.com");
-        user2.setPassword(passwordEncoder.encode("123456"));
-        user2.setVerified(true);
-        user2.setBlocked(false);
-        user2.setAvatar(file);
-        user2.setRole(Role.ROLE_CUSTOMER);
-        userRepository.save(user2);
+        User user2_1 = new User();
+        user2_1.setName("customer1");
+        user2_1.setDob(new Date(System.currentTimeMillis()));
+        user2_1.setPhone("0223456789");
+        user2_1.setEmail("customer1@gmail.com");
+        user2_1.setPassword(passwordEncoder.encode("123456"));
+        user2_1.setVerified(true);
+        user2_1.setBlocked(false);
+        user2_1.setAvatar(file);
+        user2_1.setRole(Role.ROLE_CUSTOMER);
+
+        User user2_2 = new User();
+        user2_2.setName("customer2");
+        user2_2.setDob(new Date(System.currentTimeMillis()));
+        user2_2.setPhone("0923456789");
+        user2_2.setEmail("customer2@gmail.com");
+        user2_2.setPassword(passwordEncoder.encode("123456"));
+        user2_2.setVerified(true);
+        user2_2.setBlocked(false);
+        user2_2.setAvatar(file);
+        user2_2.setRole(Role.ROLE_CUSTOMER);
 
         User user3 = new User();
         user3.setName("staff1");
@@ -74,7 +126,6 @@ public class SeederService implements CommandLineRunner {
         user3.setBlocked(false);
         user3.setAvatar(file);
         user3.setRole(Role.ROLE_STAFF);
-        userRepository.save(user3);
 
         User user3_1 = new User();
         user3_1.setName("staff2");
@@ -86,7 +137,6 @@ public class SeederService implements CommandLineRunner {
         user3_1.setBlocked(false);
         user3_1.setAvatar(file);
         user3_1.setRole(Role.ROLE_STAFF);
-        userRepository.save(user3_1);
 
         User user3_2 = new User();
         user3_2.setName("staff3");
@@ -98,7 +148,6 @@ public class SeederService implements CommandLineRunner {
         user3_2.setBlocked(false);
         user3_2.setAvatar(file);
         user3_2.setRole(Role.ROLE_STAFF);
-        userRepository.save(user3_2);
 
         User user3_3 = new User();
         user3_3.setName("staff4");
@@ -110,19 +159,8 @@ public class SeederService implements CommandLineRunner {
         user3_3.setBlocked(false);
         user3_3.setAvatar(file);
         user3_3.setRole(Role.ROLE_STAFF);
-        userRepository.save(user3_3);
 
-        User user4 = new User();
-        user4.setName("receptionist");
-        user4.setDob(new Date(System.currentTimeMillis()));
-        user4.setPhone("0777777789");
-        user4.setEmail("receptionist@gmail.com");
-        user4.setPassword(passwordEncoder.encode("123456"));
-        user4.setVerified(true);
-        user4.setBlocked(false);
-        user4.setAvatar(file);
-        user4.setRole(Role.ROLE_RECEPTIONIST);
-        userRepository.save(user4);
+        userRepository.saveAll(List.of(user1, user2_1, user2_2, user3_1, user3_2, user3_3));
     }
     public void seedDefaultTypesServicesCombos(){
         User admin = userRepository.findByEmail("admin@gmail.com");
@@ -240,26 +278,32 @@ public class SeederService implements CommandLineRunner {
 
         ServiceType serviceType1 = new ServiceType();
         serviceType1.setName("Haircut");
+        serviceType1.setDeleted(false);
         serviceType1 = serviceTypeRepository.save(serviceType1);
 
         ServiceType serviceType2 = new ServiceType();
         serviceType2.setName("Shave");
+        serviceType2.setDeleted(false);
         serviceType2 = serviceTypeRepository.save(serviceType2);
 
         ServiceType serviceType3 = new ServiceType();
         serviceType3.setName("Beard Styling");
+        serviceType3.setDeleted(false);
         serviceType3 = serviceTypeRepository.save(serviceType3);
 
         ServiceType serviceType4 = new ServiceType();
         serviceType4.setName("Hair Coloring");
+        serviceType4.setDeleted(false);
         serviceType4 = serviceTypeRepository.save(serviceType4);
 
         ServiceType serviceType5 = new ServiceType();
         serviceType5.setName("Facial");
+        serviceType5.setDeleted(false);
         serviceType5 = serviceTypeRepository.save(serviceType5);
 
         ServiceType serviceType6 = new ServiceType();
         serviceType6.setName("Massage");
+        serviceType6.setDeleted(false);
         serviceType6 = serviceTypeRepository.save(serviceType6);
         // done seed types
 
@@ -269,6 +313,7 @@ public class SeederService implements CommandLineRunner {
         service1.setPrice(70000);
         service1.setEstimateTime(30);
         service1.setServiceType(serviceType1);
+        service1.setDeleted(false);
         service1.setImages(List.of(file2));
         service1 = serviceRepository.save(service1);
 
@@ -278,6 +323,7 @@ public class SeederService implements CommandLineRunner {
         service2.setPrice(100000);
         service2.setEstimateTime(45);
         service2.setServiceType(serviceType1);
+        service2.setDeleted(false);
         service2.setImages(List.of(file3));
         service2 = serviceRepository.save(service2);
 
@@ -287,6 +333,7 @@ public class SeederService implements CommandLineRunner {
         service3.setPrice(50000);
         service3.setEstimateTime(15);
         service3.setServiceType(serviceType3);
+        service3.setDeleted(false);
         service3.setImages(List.of(file4));
         service3 = serviceRepository.save(service3);
 
@@ -296,6 +343,7 @@ public class SeederService implements CommandLineRunner {
         service4.setPrice(70000);
         service4.setEstimateTime(30);
         service4.setServiceType(serviceType3);
+        service4.setDeleted(false);
         service4.setImages(List.of(file5));
         service4 = serviceRepository.save(service4);
 
@@ -305,6 +353,7 @@ public class SeederService implements CommandLineRunner {
         service5.setPrice(60000);
         service5.setEstimateTime(20);
         service5.setServiceType(serviceType2);
+        service5.setDeleted(false);
         service5.setImages(List.of(file6));
         service5 = serviceRepository.save(service5);
 
@@ -314,6 +363,7 @@ public class SeederService implements CommandLineRunner {
         service6.setPrice(80000);
         service6.setEstimateTime(30);
         service6.setServiceType(serviceType2);
+        service6.setDeleted(false);
         service6.setImages(List.of(file7));
         service6 = serviceRepository.save(service6);
 
@@ -323,6 +373,7 @@ public class SeederService implements CommandLineRunner {
         service7.setPrice(80000);
         service7.setEstimateTime(20);
         service7.setServiceType(serviceType5);
+        service7.setDeleted(false);
         service7.setImages(List.of(file8));
         service7 = serviceRepository.save(service7);
 
@@ -332,6 +383,7 @@ public class SeederService implements CommandLineRunner {
         service8.setPrice(100000);
         service8.setEstimateTime(40);
         service8.setServiceType(serviceType5);
+        service8.setDeleted(false);
         service8.setImages(List.of(file9));
         service8 = serviceRepository.save(service8);
 
@@ -341,6 +393,7 @@ public class SeederService implements CommandLineRunner {
         service9.setPrice(120000);
         service9.setEstimateTime(15);
         service9.setServiceType(serviceType6);
+        service9.setDeleted(false);
         service9.setImages(List.of(file10));
         service9 = serviceRepository.save(service9);
 
@@ -350,6 +403,7 @@ public class SeederService implements CommandLineRunner {
         service10.setPrice(300000);
         service10.setEstimateTime(60);
         service10.setServiceType(serviceType6);
+        service10.setDeleted(false);
         service10.setImages(List.of(file11));
         service10 = serviceRepository.save(service10);
 
@@ -359,6 +413,7 @@ public class SeederService implements CommandLineRunner {
         service11.setPrice(500000);
         service11.setEstimateTime(120);
         service11.setServiceType(serviceType4);
+        service11.setDeleted(false);
         service11.setImages(List.of(file12));
         service11 = serviceRepository.save(service11);
 
@@ -368,6 +423,7 @@ public class SeederService implements CommandLineRunner {
         service12.setPrice(1000000);
         service12.setEstimateTime(180);
         service12.setServiceType(serviceType4);
+        service12.setDeleted(false);
         service12.setImages(List.of(file13));
         service12 = serviceRepository.save(service12);
 
@@ -377,6 +433,7 @@ public class SeederService implements CommandLineRunner {
         combo1.setName("The Executive Combo");
         combo1.setDescription("A complete grooming package for a polished, executive look");
         combo1.setServices(List.of(service2, service6, service8));
+        combo1.setDeleted(false);
         combo1.setPrice(250000);
         combo1.setEstimateTime(105);
         combo1.setImages(List.of(file3, file7, file9));
@@ -386,6 +443,7 @@ public class SeederService implements CommandLineRunner {
         combo2.setName("The Gentleman’s Combo");
         combo2.setDescription("Essential grooming for a fresh, refined look");
         combo2.setServices(List.of(service1, service3, service5));
+        combo2.setDeleted(false);
         combo2.setPrice(180000);
         combo2.setEstimateTime(65);
         combo2.setImages(List.of(file3, file7, file9));
@@ -395,6 +453,7 @@ public class SeederService implements CommandLineRunner {
         combo3.setName("Relax and Revive Combo");
         combo3.setDescription("Rejuvenating facial and head massage for relaxation and stress relief");
         combo3.setServices(List.of(service8, service9));
+        combo3.setDeleted(false);
         combo3.setPrice(200000);
         combo3.setEstimateTime(55);
         combo3.setImages(List.of(file9, file10));
@@ -404,6 +463,7 @@ public class SeederService implements CommandLineRunner {
         combo4.setName("Premium Grooming Combo");
         combo4.setDescription("A top-notch grooming package with all the premium treatments");
         combo4.setServices(List.of(service2, service4, service7));
+        combo4.setDeleted(false);
         combo4.setPrice(220000);
         combo4.setEstimateTime(95);
         combo4.setImages(List.of(file3, file5, file8));

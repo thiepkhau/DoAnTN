@@ -1,9 +1,6 @@
 package org.example.barber_shop.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.example.barber_shop.Constants.TransactionStatus;
 
@@ -18,19 +15,20 @@ import java.util.List;
 @Table(name = "payments")
 @ToString
 public class Payment extends DistributedEntity{
-    @ManyToOne
-    private User user;
 
-    @OneToMany
+    @OneToMany(mappedBy = "payment")
     private List<Booking> bookings;
-
     private long amount;
     public String txnRef;
     public String orderInfo;
     public String bankCode;
     public String transactionNo;
+    @Enumerated(EnumType.STRING)
     public TransactionStatus transactionStatus;
     public String cardType;
     public String bankTranNo;
     public Timestamp paid_at;
+    public String voucherCode;
+    public int voucherDiscount;
+    public long discountAmount;
 }
