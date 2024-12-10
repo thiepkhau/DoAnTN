@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.processing.Generated;
 import org.example.barber_shop.DTO.File.FileResponseNoOwner;
 import org.example.barber_shop.DTO.User.RegisterRequest;
+import org.example.barber_shop.DTO.User.StaffResponse;
 import org.example.barber_shop.DTO.User.UserResponse;
 import org.example.barber_shop.DTO.User.UserResponseNoFile;
 import org.example.barber_shop.Entity.File;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-19T14:31:39+0700",
+    date = "2024-12-09T09:47:45+0700",
     comments = "version: 1.6.2, compiler: javac, environment: Java 18.0.2.1 (Oracle Corporation)"
 )
 @Component
@@ -100,6 +101,45 @@ public class UserMapperImpl implements UserMapper {
         userResponseNoFile.updatedAt = user.getUpdatedAt();
 
         return userResponseNoFile;
+    }
+
+    @Override
+    public StaffResponse toStaffResponse(User user) {
+        if ( user == null ) {
+            return null;
+        }
+
+        StaffResponse staffResponse = new StaffResponse();
+
+        if ( user.getId() != null ) {
+            staffResponse.id = user.getId().intValue();
+        }
+        staffResponse.name = user.getName();
+        staffResponse.email = user.getEmail();
+        staffResponse.phone = user.getPhone();
+        staffResponse.dob = user.getDob();
+        staffResponse.avatar = fileToFileResponseNoOwner( user.getAvatar() );
+        staffResponse.verified = user.isVerified();
+        staffResponse.blocked = user.isBlocked();
+        staffResponse.role = user.getRole();
+        staffResponse.createdAt = user.getCreatedAt();
+        staffResponse.updatedAt = user.getUpdatedAt();
+
+        return staffResponse;
+    }
+
+    @Override
+    public List<StaffResponse> toStaffResponses(List<User> users) {
+        if ( users == null ) {
+            return null;
+        }
+
+        List<StaffResponse> list = new ArrayList<StaffResponse>( users.size() );
+        for ( User user : users ) {
+            list.add( toStaffResponse( user ) );
+        }
+
+        return list;
     }
 
     protected FileResponseNoOwner fileToFileResponseNoOwner(File file) {

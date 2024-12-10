@@ -10,6 +10,7 @@ import org.example.barber_shop.DTO.Booking.WorkScheduleResponse;
 import org.example.barber_shop.DTO.BookingDetail.BookingDetailResponse;
 import org.example.barber_shop.DTO.Combo.ComboResponse;
 import org.example.barber_shop.DTO.File.FileResponseNoOwner;
+import org.example.barber_shop.DTO.Review.ReviewResponse;
 import org.example.barber_shop.DTO.Service.ServiceResponseNoType;
 import org.example.barber_shop.DTO.User.UserResponse;
 import org.example.barber_shop.DTO.User.UserResponseNoFile;
@@ -17,13 +18,14 @@ import org.example.barber_shop.Entity.Booking;
 import org.example.barber_shop.Entity.BookingDetail;
 import org.example.barber_shop.Entity.Combo;
 import org.example.barber_shop.Entity.File;
+import org.example.barber_shop.Entity.Review;
 import org.example.barber_shop.Entity.Service;
 import org.example.barber_shop.Entity.User;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-22T09:35:49+0700",
+    date = "2024-12-09T09:47:45+0700",
     comments = "version: 1.6.2, compiler: javac, environment: Java 18.0.2.1 (Oracle Corporation)"
 )
 @Component
@@ -48,6 +50,7 @@ public class BookingMapperImpl implements BookingMapper {
         bookingResponseNoUser.createdAt = booking.getCreatedAt();
         bookingResponseNoUser.updatedAt = booking.getUpdatedAt();
         bookingResponseNoUser.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
+        bookingResponseNoUser.review = reviewToReviewResponse( booking.getReview() );
 
         return bookingResponseNoUser;
     }
@@ -88,7 +91,7 @@ public class BookingMapperImpl implements BookingMapper {
 
         List<BookingResponseNoStaff> list = new ArrayList<BookingResponseNoStaff>( bookings.size() );
         for ( Booking booking : bookings ) {
-            list.add( bookingToBookingResponseNoStaff( booking ) );
+            list.add( toResponseNoStaff( booking ) );
         }
 
         return list;
@@ -102,10 +105,59 @@ public class BookingMapperImpl implements BookingMapper {
 
         List<BookingResponseAdmin> list = new ArrayList<BookingResponseAdmin>( bookings.size() );
         for ( Booking booking : bookings ) {
-            list.add( bookingToBookingResponseAdmin( booking ) );
+            list.add( toResponseAdmin( booking ) );
         }
 
         return list;
+    }
+
+    @Override
+    public BookingResponseAdmin toResponseAdmin(Booking booking) {
+        if ( booking == null ) {
+            return null;
+        }
+
+        BookingResponseAdmin bookingResponseAdmin = new BookingResponseAdmin();
+
+        if ( booking.getId() != null ) {
+            bookingResponseAdmin.id = booking.getId();
+        }
+        bookingResponseAdmin.status = booking.getStatus();
+        bookingResponseAdmin.note = booking.getNote();
+        bookingResponseAdmin.staff = userToUserResponseNoFile( booking.getStaff() );
+        bookingResponseAdmin.customer = userToUserResponseNoFile( booking.getCustomer() );
+        bookingResponseAdmin.startTime = booking.getStartTime();
+        bookingResponseAdmin.endTime = booking.getEndTime();
+        bookingResponseAdmin.createdAt = booking.getCreatedAt();
+        bookingResponseAdmin.updatedAt = booking.getUpdatedAt();
+        bookingResponseAdmin.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
+        bookingResponseAdmin.review = reviewToReviewResponse( booking.getReview() );
+
+        return bookingResponseAdmin;
+    }
+
+    @Override
+    public BookingResponseNoStaff toResponseNoStaff(Booking booking) {
+        if ( booking == null ) {
+            return null;
+        }
+
+        BookingResponseNoStaff bookingResponseNoStaff = new BookingResponseNoStaff();
+
+        if ( booking.getId() != null ) {
+            bookingResponseNoStaff.id = booking.getId();
+        }
+        bookingResponseNoStaff.status = booking.getStatus();
+        bookingResponseNoStaff.note = booking.getNote();
+        bookingResponseNoStaff.customer = userToUserResponse( booking.getCustomer() );
+        bookingResponseNoStaff.startTime = booking.getStartTime();
+        bookingResponseNoStaff.endTime = booking.getEndTime();
+        bookingResponseNoStaff.createdAt = booking.getCreatedAt();
+        bookingResponseNoStaff.updatedAt = booking.getUpdatedAt();
+        bookingResponseNoStaff.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
+        bookingResponseNoStaff.review = reviewToReviewResponse( booking.getReview() );
+
+        return bookingResponseNoStaff;
     }
 
     protected FileResponseNoOwner fileToFileResponseNoOwner(File file) {
@@ -252,6 +304,24 @@ public class BookingMapperImpl implements BookingMapper {
         return list1;
     }
 
+    protected ReviewResponse reviewToReviewResponse(Review review) {
+        if ( review == null ) {
+            return null;
+        }
+
+        ReviewResponse reviewResponse = new ReviewResponse();
+
+        if ( review.getId() != null ) {
+            reviewResponse.id = review.getId();
+        }
+        reviewResponse.staffComment = review.getStaffComment();
+        reviewResponse.staffRating = review.getStaffRating();
+        reviewResponse.createdAt = review.getCreatedAt();
+        reviewResponse.updatedAt = review.getUpdatedAt();
+
+        return reviewResponse;
+    }
+
     protected WorkScheduleResponse bookingToWorkScheduleResponse(Booking booking) {
         if ( booking == null ) {
             return null;
@@ -266,28 +336,6 @@ public class BookingMapperImpl implements BookingMapper {
         workScheduleResponse.endTime = booking.getEndTime();
 
         return workScheduleResponse;
-    }
-
-    protected BookingResponseNoStaff bookingToBookingResponseNoStaff(Booking booking) {
-        if ( booking == null ) {
-            return null;
-        }
-
-        BookingResponseNoStaff bookingResponseNoStaff = new BookingResponseNoStaff();
-
-        if ( booking.getId() != null ) {
-            bookingResponseNoStaff.id = booking.getId();
-        }
-        bookingResponseNoStaff.status = booking.getStatus();
-        bookingResponseNoStaff.note = booking.getNote();
-        bookingResponseNoStaff.customer = userToUserResponse( booking.getCustomer() );
-        bookingResponseNoStaff.startTime = booking.getStartTime();
-        bookingResponseNoStaff.endTime = booking.getEndTime();
-        bookingResponseNoStaff.createdAt = booking.getCreatedAt();
-        bookingResponseNoStaff.updatedAt = booking.getUpdatedAt();
-        bookingResponseNoStaff.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
-
-        return bookingResponseNoStaff;
     }
 
     protected UserResponseNoFile userToUserResponseNoFile(User user) {
@@ -311,28 +359,5 @@ public class BookingMapperImpl implements BookingMapper {
         userResponseNoFile.updatedAt = user.getUpdatedAt();
 
         return userResponseNoFile;
-    }
-
-    protected BookingResponseAdmin bookingToBookingResponseAdmin(Booking booking) {
-        if ( booking == null ) {
-            return null;
-        }
-
-        BookingResponseAdmin bookingResponseAdmin = new BookingResponseAdmin();
-
-        if ( booking.getId() != null ) {
-            bookingResponseAdmin.id = booking.getId();
-        }
-        bookingResponseAdmin.status = booking.getStatus();
-        bookingResponseAdmin.note = booking.getNote();
-        bookingResponseAdmin.staff = userToUserResponseNoFile( booking.getStaff() );
-        bookingResponseAdmin.customer = userToUserResponseNoFile( booking.getCustomer() );
-        bookingResponseAdmin.startTime = booking.getStartTime();
-        bookingResponseAdmin.endTime = booking.getEndTime();
-        bookingResponseAdmin.createdAt = booking.getCreatedAt();
-        bookingResponseAdmin.updatedAt = booking.getUpdatedAt();
-        bookingResponseAdmin.bookingDetails = bookingDetailListToBookingDetailResponseList( booking.getBookingDetails() );
-
-        return bookingResponseAdmin;
     }
 }
