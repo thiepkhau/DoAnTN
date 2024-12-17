@@ -10,4 +10,5 @@ public class ServiceTypeResponse {
     public String name;
     public List<ServiceResponseNoType> services;
     public Timestamp createdAt;
-    public Timestamp updatedAt;}
+    public Timestamp updatedAt;
+}

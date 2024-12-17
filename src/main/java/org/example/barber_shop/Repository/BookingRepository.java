@@ -5,6 +5,8 @@ import org.example.barber_shop.Constants.BookingStatus;
 import org.example.barber_shop.Entity.Booking;
 import org.example.barber_shop.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -20,9 +22,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByStaff_Id(Long staffId);
     List<Booking> findByStatusAndStartTimeBetween(BookingStatus bookingStatus, Timestamp startTime, Timestamp endTime);
     Booking findByIdAndCustomerAndStatus(Long id, User customer, BookingStatus status);
-    List<Booking> findByStaffAndStatusNotAndStartTimeInOrEndTimeInOrStartTimeLessThanAndEndTimeGreaterThan(User staff, BookingStatus bookingStatus, Collection<Timestamp> startTime, Collection<Timestamp> endTime, Timestamp startTime2, Timestamp endTime2);
     List<Booking> findAllByStatus(BookingStatus status);
     Booking findByIdAndCustomer(long id, User customer);
     Booking findByIdAndStaff(long id, User staff);
     List<Booking> findByStaffIn(Collection<User> staff);
+    int countAllByCustomerAndStartTimeBetween(User customer, Timestamp startTime, Timestamp endTime);
+
+    @Query("SELECT SUM(b.totalPrice) FROM Booking b WHERE b.customer.id = :id AND b.status = 'PAID' and b.startTime >= :monthStart and b.startTime <= :monthEnd")
+    Long sumTotalPrice(@Param("id") long id, @Param("monthStart") Timestamp monthStart, @Param("monthEnd") Timestamp monthEnd);
+    List<Booking> findByStaffAndStatusNotAndStartTimeGreaterThanOrEndTimeLessThanOrStartTimeLessThanAndEndTimeGreaterThan(User staff, BookingStatus status, Timestamp startTime, Timestamp endTime, Timestamp startTime2, Timestamp endTime2);
 }

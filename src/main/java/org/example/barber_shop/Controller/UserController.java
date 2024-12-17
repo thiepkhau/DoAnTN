@@ -38,7 +38,6 @@ public class UserController {
 
     @PutMapping("/profile")
     public ApiResponse<?> updateUserProfile(@RequestBody UpdateProfileRequest updateProfileRequest){
-        System.out.println("update profile");
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "PROFILE UPDATED",
@@ -56,19 +55,19 @@ public class UserController {
     @GetMapping("/get-all-staffs")
     public ApiResponse<?> getAllStaffs() {
         return new ApiResponse<>(
-                HttpStatus.CONTINUE.value(), "ALL STAFFS", userService.getAllStaffs()
+                HttpStatus.OK.value(), "ALL STAFFS", userService.getAllStaffs()
         );
     }
     @GetMapping("/get-all-admins")
     public ApiResponse<?> getAllAdmins() {
         return new ApiResponse<>(
-                HttpStatus.CONTINUE.value(), "ALL ADMINS", userService.getAllAdmins()
+                HttpStatus.OK.value(), "ALL ADMINS", userService.getAllAdmins()
         );
     }
     @GetMapping("/get-all-customers")
     public ApiResponse<?> getAllCustomers() {
         return new ApiResponse<>(
-                HttpStatus.CONTINUE.value(), "ALL CUSTOMERS", userService.getAllCustomers()
+                HttpStatus.OK.value(), "ALL CUSTOMERS", userService.getAllCustomers()
         );
     }
     @GetMapping("/logout")
@@ -85,7 +84,6 @@ public class UserController {
     }
     @PutMapping("")
     public ApiResponse<?> updateUser(@RequestBody UpdateUserRequest updateUserRequest){
-        System.out.println("update user put mapping");
         return new ApiResponse<>(
                 HttpStatus.OK.value(), "USER UPDATED", userService.updateUser(updateUserRequest)
         );

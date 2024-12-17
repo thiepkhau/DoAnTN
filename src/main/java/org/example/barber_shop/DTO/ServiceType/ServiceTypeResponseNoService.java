@@ -6,4 +6,5 @@ public class ServiceTypeResponseNoService {
     public long id;
     public String name;
     public Timestamp createdAt;
-    public Timestamp updatedAt;}
+    public Timestamp updatedAt;
+}
