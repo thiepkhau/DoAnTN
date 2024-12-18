@@ -1,9 +1,6 @@
 package org.example.barber_shop.Controller;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import org.example.barber_shop.DTO.ApiResponse;
 import org.example.barber_shop.DTO.User.ForgotPasswordRequest;
 import org.example.barber_shop.DTO.User.LoginRequest;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Data
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor

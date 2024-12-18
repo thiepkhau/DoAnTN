@@ -19,7 +19,7 @@ public class UserController {
     public final UserService userService;
 
     @GetMapping("")
-        public ApiResponse<?> getAllUsers() {
+    public ApiResponse<?> getAllUsers() {
         return new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "ALL USERS",
